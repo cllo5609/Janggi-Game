@@ -805,7 +805,7 @@ class JanggiGame:
                 return False
             return True
 
-        # Calls a method for the each the current and move to position to check if the move is valid. Returns False
+        # Calls a method for the current and move to position to check if the move is valid. Returns False
         # if it is not a valid move.
         cur_check = self.cur_pos_check(piece_obj, current)
         move_check = self.move_pos_check(move_to)
@@ -995,7 +995,8 @@ class JanggiGame:
 
         # Checks if the player is in check and calls the check_check method if True.
         if self._check == self.get_player_turn():
-            self._check = False
+            return False
+
 
         # Initiates the player's desired move and updates the move list for each piece on the board.
         self.initiate_move(piece_obj, cur_pos, move_to)
