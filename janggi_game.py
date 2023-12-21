@@ -657,7 +657,7 @@ class JanggiGame:
         :return: The board that the game will played on as a list of lists.
         """
 
-        board = [[""] * 9 for row in range(10)]
+        board = [["   "] * 9 for row in range(10)]
         return board
 
 
@@ -841,7 +841,7 @@ class JanggiGame:
         """
 
         board = self.get_board()
-        if board[cur_pos[0]][cur_pos[1]] == "":
+        if board[cur_pos[0]][cur_pos[1]] == "   ":
             return False
 
         player = piece_obj.get_player()
@@ -863,7 +863,7 @@ class JanggiGame:
         board = self.get_board()
         position = board[move_pos[0]][move_pos[1]]
 
-        if position == "":
+        if position == "   ":
             return True
 
         player = position.get_player()
@@ -886,7 +886,7 @@ class JanggiGame:
 
         # Checks if their is a game piece at that position.
         board = self.get_board()
-        if board[cur_pos[0]][cur_pos[1]] == "":
+        if board[cur_pos[0]][cur_pos[1]] == "   ":
             return False
 
         # Checks if the current player is in check.
@@ -1042,9 +1042,9 @@ class JanggiGame:
         """
 
         move_to_piece = self._board[move_to[0]][move_to[1]]
-        if move_to_piece != "":
+        if move_to_piece != "   ":
             self._pieces.remove(move_to_piece)
-        self.set_board("", cur_pos[0], cur_pos[1])
+        self.set_board("   ", cur_pos[0], cur_pos[1])
         self.set_board(piece_obj, move_to[0], move_to[1])
         piece_obj.set_row(move_to[0])
         piece_obj.set_column(move_to[1])
@@ -1065,7 +1065,7 @@ class JanggiGame:
         column = move[1]
 
         # Called if a move can capture an opposing player's game piece.
-        if board[row][column] != "":
+        if board[row][column] != "   ":
             piece = board[row][column]
             piece_type = piece.get_type()
             player = piece.get_player()
@@ -1126,7 +1126,7 @@ class JanggiGame:
         if player == "RED":
             # Checks that the move is in range of the board and palace.
             if row + r in range(3) and column + c in range(3, 6):
-                if board[row + r][column + c] != "":
+                if board[row + r][column + c] != "   ":
                     occupant = board[row + r][column + c]
                     occ_player = occupant.get_player()
                     if occ_player == player:
@@ -1137,7 +1137,7 @@ class JanggiGame:
         # Move parameters for a General or Guard in the blue palace.
         if player == "BLUE":
             if row + r in range(7, 10) and column + c in range(3, 6):
-                if board[row + r][column + c] != "":
+                if board[row + r][column + c] != "   ":
                     occupant = board[row + r][column + c]
                     occ_player = occupant.get_player()
                     if occ_player == player:
@@ -1202,14 +1202,14 @@ class JanggiGame:
         if row + r in range(10) and column + c in range(9):
             first_row = row + r
             first_col = column + c
-            if board[first_row][first_col] != "":
+            if board[first_row][first_col] != "   ":
                 return moves
 
             # Checks if the move is in range of the board and that the move is valid for the diagonal movement.
             if first_row + dr in range(10) and first_col + dc in range(9):
                 second_row = first_row + dr
                 second_col = first_col + dc
-                if board[second_row][second_col] != "":
+                if board[second_row][second_col] != "   ":
                     occupant = board[second_row][second_col]
                     occ_player = occupant.get_player()
                     if occ_player == player:
@@ -1271,14 +1271,14 @@ class JanggiGame:
         if row + r in range(10) and column + c in range(9):
             first_row = row + r
             first_col = column + c
-            if board[first_row][first_col] != "":
+            if board[first_row][first_col] != "   ":
                 return moves
 
             # Checks if the move is in range of the board and that no piece is blocking the movement diagonally.
             if first_row + dr in range(10) and first_col + dc in range(9):
                 second_row = first_row + dr
                 second_col = first_col + dc
-                if board[second_row][second_col] != "":
+                if board[second_row][second_col] != "   ":
                     return moves
 
                 # Checks if the move is in range of the board and that the move is valid for the second diagonal
@@ -1286,7 +1286,7 @@ class JanggiGame:
                 if second_row + dr in range(10) and second_col + dc in range(9):
                     third_row = second_row + dr
                     third_col = second_col + dc
-                    if board[third_row][third_col] != "":
+                    if board[third_row][third_col] != "   ":
                         occupant = board[third_row][third_col]
                         occ_player = occupant.get_player()
                         if occ_player == player:
@@ -1348,7 +1348,7 @@ class JanggiGame:
         if row + r in range(10) and column + c in range(9):
             next_row = row + r
             next_col = column + c
-            if self._board[next_row][next_col] != "":
+            if self._board[next_row][next_col] != "   ":
                 occupant = self._board[next_row][next_col]
                 occ_player = occupant.get_player()
                 if occ_player != player:
@@ -1380,7 +1380,7 @@ class JanggiGame:
             if column + c in range(3, 6):
                 next_row = row + r
                 next_col = column + c
-                if self._board[next_row][next_col] != "":
+                if self._board[next_row][next_col] != "   ":
                     occupant = self._board[next_row][next_col]
                     occ_player = occupant.get_player()
                     if occ_player != player:
@@ -1457,13 +1457,13 @@ class JanggiGame:
 
             # Runs if the Cannon has already jumped a game piece.
             if jump_count == 1:
-                if self._board[next_row][next_col] != "":
+                if self._board[next_row][next_col] != "   ":
                     occupant = self._board[next_row][next_col]
                     piece_type = occupant.get_type()
                     occ_player = occupant.get_player()
                     # Checks if the game piece it encounters is a Cannon or a friendly.
                     if piece_type == "Cannon" or occ_player == player:
-                        if self._board[row][column] != "":
+                        if self._board[row][column] != "   ":
                             return
                         moves.append([row, column])
                         return
@@ -1472,7 +1472,7 @@ class JanggiGame:
                 moves.append([next_row, next_col])
 
             # Runs if the Cannon has not yet jumped a game piece.
-            if jump_count == 0 and self._board[next_row][next_col] != "":
+            if jump_count == 0 and self._board[next_row][next_col] != "   ":
                 occupant = self._board[next_row][next_col]
                 piece_type = occupant.get_type()
                 # Checks if encountered piece is a Cannon.
@@ -1507,12 +1507,12 @@ class JanggiGame:
 
                 # Runs if the Cannon has already jumped a game piece.
                 if jump_count == 1:
-                    if self._board[next_row][next_col] != "":
+                    if self._board[next_row][next_col] != "   ":
                         occupant = self._board[next_row][next_col]
                         occ_player = occupant.get_player()
                         piece_type = occupant.get_type()
                         if piece_type == "Cannon" or occ_player == player:
-                            if self._board[row][column] != "":
+                            if self._board[row][column] != "   ":
                                 return
                             moves.append([row, column])
                             return
@@ -1521,7 +1521,7 @@ class JanggiGame:
                     moves.append([next_row, next_col])
 
                 # Runs if the Cannon has not yet jumped a game piece.
-                if jump_count == 0 and self._board[next_row][next_col] != "":
+                if jump_count == 0 and self._board[next_row][next_col] != "   ":
                     occupant = self._board[next_row][next_col]
                     piece_type = occupant.get_type()
                     if piece_type == "Cannon":
@@ -1592,7 +1592,7 @@ class JanggiGame:
         # Checks that the move is in range of the board and if it is valid.
         board = self.get_board()
         if row + r in range(10) and column + c in range(9):
-            if board[row + r][column + c] != "":
+            if board[row + r][column + c] != "   ":
                 occupant = board[row + r][column + c]
                 occ_player = occupant.get_player()
                 if occ_player == player:
@@ -1623,7 +1623,7 @@ class JanggiGame:
         board = self.get_board()
         if row + r in range(3) or row + r in range(7, 10):
             if column + c in range(3, 6):
-                if board[row + r][column + c] != "":
+                if board[row + r][column + c] != "   ":
                     occupant = board[row + r][column + c]
                     occ_player = occupant.get_player()
                     if occ_player == player:
@@ -1652,3 +1652,4 @@ class JanggiGame:
         for row in dis_board:
             print(row)
             print()
+
