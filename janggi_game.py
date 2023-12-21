@@ -1096,10 +1096,12 @@ class JanggiGame:
         self.general_and_guard_moves_list(player, row, column, 0, -1, moves)
         self.general_and_guard_moves_list(player, row, column, 1, 0, moves)
         self.general_and_guard_moves_list(player, row, column, -1, 0, moves)
-        self.general_and_guard_moves_list(player, row, column, 1, 1, moves)
-        self.general_and_guard_moves_list(player, row, column, -1, -1, moves)
-        self.general_and_guard_moves_list(player, row, column, 1, -1, moves)
-        self.general_and_guard_moves_list(player, row, column, -1, 1, moves)
+
+        if (column == 4 and (row == 1 or row == 8)) or (column != 4 and (row != 1 and row != 8)):
+            self.general_and_guard_moves_list(player, row, column, 1, 1, moves)
+            self.general_and_guard_moves_list(player, row, column, -1, -1, moves)
+            self.general_and_guard_moves_list(player, row, column, 1, -1, moves)
+            self.general_and_guard_moves_list(player, row, column, -1, 1, moves)
 
         for move in moves:
             self.general_check(move)
