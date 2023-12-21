@@ -503,8 +503,8 @@ class JanggiGame:
         self._game_state = "UNFINISHED"
         self._player_turn = "BLUE"
         self._check = False
-        self._check_count = 0
         self._checkmate = False
+        self._checked_coor = []
 
 
     def get_board(self):
@@ -648,6 +648,25 @@ class JanggiGame:
             return True
 
         return False
+
+    def get_checked_coor(self):
+
+        """
+        Gets the coordinates of the General in check.
+        :return: Returns the coordinates of the General in check.
+        """
+
+        return self._checked_coor
+
+    def set_checked_coor(self, coord):
+
+        """
+        Sets the coordinates of the General in check.
+        :param coord: Represents the coordinates of the game piece as a list.
+        :return: NONE
+        """
+
+        self._checked_coor = coord
 
 
     def create_board(self):
@@ -800,6 +819,13 @@ class JanggiGame:
 
         # Switches the player's turn if the move was successful and returns True.
         self.set_player_turn(self.get_player_turn())
+        player = self.get_player_turn()
+
+        # Checks if checked general is checkmated
+        if self.get_check() == player:
+            if self.check_checkmate():
+                self.set_checkmate(self._player_turn)
+            self.set_check(player)
         return True
 
 
@@ -969,11 +995,7 @@ class JanggiGame:
 
         # Checks if the player is in check and calls the check_check method if True.
         if self._check == self.get_player_turn():
-            check_check = self.check_check(piece_obj, cur_pos, move_to)
-            if check_check:
-                self._check = False
-                return True
-            return False
+            self._check = False
 
         # Initiates the player's desired move and updates the move list for each piece on the board.
         self.initiate_move(piece_obj, cur_pos, move_to)
@@ -982,51 +1004,42 @@ class JanggiGame:
 
         return True
 
-
-    def check_check(self, piece_obj, cur_pos, move_to):
+    def check_checkmate(self):
 
         """
-        Called by the move_check method if the current player is in check. Sets check to False and saves a copy
-        of the current board and pieces in the case that the player can make a move to get them out of check but
-        did not make that move. It initiates the move for the current piece object and checks if the player's
-        general is still in check after that move. If True, it checks whether the player has any other possible
-        moves to take them out of check. If not, set_checkmate is called which changes the checkmate status and
-        game state. If not in check the game board is reverted back.
-        :param piece_obj: Represents a game piece object
+        Called by the make_move method to check for a checkmate. Moves the piece to
+        the move to position, removes the game piece object from the pieces list if an opponent's piece was captured,
+        sets the previous position to "   " and sets the new row and column for the game piece object by calling
+        set methods in the Pieces class.
+        :param piece_obj: Represents a game piece object.
         :param cur_pos: Represents the current position of a game piece as a list.
         :param move_to: Represents the move to position of a game piece as a list.
-        :return: True if the current player is not longer in check or False otherwise.
+        :return: True if a player is Checkmated, False if the player is only in Check
         """
 
-        self._check = False
-        saved_board = self._board
-        saved_pieces = self._pieces
-        board = self._board
+        gen_coor = self.get_checked_coor()
+        gen_obj = self._board[gen_coor[0]][gen_coor[1]]
+        gen_moves = self.current_moves(gen_obj)
 
-        self.initiate_move(piece_obj, cur_pos, move_to)
-        for piece in self.get_pieces():
-            self.current_moves(piece)
+        for move in gen_moves:
+            flag = False
+            self._check = False
+            self.initiate_move(gen_obj, gen_coor, move)
+            for piece in self.get_pieces():
+                self.current_moves(piece)
 
-        # Checks if the current player is still in check after their move was made.
-        if self._check == self.get_player_turn():
-            if self._check_count > 1:
-                self.set_checkmate(self._player_turn)
+            if self._check:
+                flag = True
+
+            self.initiate_move(gen_obj, move, gen_coor)
+            for piece in self.get_pieces():
+                self.current_moves(piece)
+
+            if not flag:
                 return False
 
-            piece_obj = board[move_to[0]][move_to[1]]
-            player = piece_obj.get_player()
-            # Checks if the player is still in check and the player can make a move that does not leave them in
-            # check.
-            if player == self.get_check():
-                self._board = saved_board
-                self._pieces = saved_pieces
-            self._check_count = 0
-            return False
-
-        self._board = saved_board
-        self._pieces = saved_pieces
-
         return True
+
 
     def initiate_move(self, piece_obj, cur_pos, move_to):
 
@@ -1072,8 +1085,8 @@ class JanggiGame:
 
             # Called if the game piece that can be captured is a General.
             if piece_type == "General":
-                self._check_count += 1
                 self.set_check(player)
+                self.set_checked_coor([row, column])
 
 
     def general_and_guard_moves(self, piece_obj, player):
@@ -1096,10 +1109,12 @@ class JanggiGame:
         self.general_and_guard_moves_list(player, row, column, 0, -1, moves)
         self.general_and_guard_moves_list(player, row, column, 1, 0, moves)
         self.general_and_guard_moves_list(player, row, column, -1, 0, moves)
-        self.general_and_guard_moves_list(player, row, column, 1, 1, moves)
-        self.general_and_guard_moves_list(player, row, column, -1, -1, moves)
-        self.general_and_guard_moves_list(player, row, column, 1, -1, moves)
-        self.general_and_guard_moves_list(player, row, column, -1, 1, moves)
+
+        if (column == 4 and (row == 1 or row == 8)) or (column != 4 and (row != 1 and row != 8)):
+            self.general_and_guard_moves_list(player, row, column, 1, 1, moves)
+            self.general_and_guard_moves_list(player, row, column, -1, -1, moves)
+            self.general_and_guard_moves_list(player, row, column, 1, -1, moves)
+            self.general_and_guard_moves_list(player, row, column, -1, 1, moves)
 
         for move in moves:
             self.general_check(move)
